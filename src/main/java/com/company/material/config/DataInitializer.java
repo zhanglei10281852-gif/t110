@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
 import java.util.UUID;
 
@@ -96,13 +97,29 @@ public class DataInitializer implements CommandLineRunner {
 
         LocalDateTime now = LocalDateTime.now();
         for (int i = 0; i < 12; i++) {
-            LocalDateTime baseTime = now.minusMonths(i);
+            YearMonth ym = YearMonth.from(now.toLocalDate()).minusMonths(i);
+            int dayInMonth;
+            if (i == 0) {
+                dayInMonth = Math.max(1, Math.min(ym.lengthOfMonth(), now.getDayOfMonth() - 3));
+            } else {
+                dayInMonth = 5 + (int)(Math.random() * 10);
+            }
+            LocalDateTime baseTime = ym.atDay(dayInMonth).atTime(10, 0, 0);
+            int outOffset1 = Math.min(2, ym.lengthOfMonth() - dayInMonth - 1);
+            int outOffset2 = Math.min(3, ym.lengthOfMonth() - dayInMonth - 1);
+            int outOffset3 = Math.min(5, ym.lengthOfMonth() - dayInMonth - 1);
+            int outOffset4 = Math.min(1, ym.lengthOfMonth() - dayInMonth - 1);
+            if (outOffset1 < 1) outOffset1 = 1;
+            if (outOffset2 < 1) outOffset2 = 1;
+            if (outOffset3 < 1) outOffset3 = 1;
+            if (outOffset4 < 1) outOffset4 = 1;
+
             if (m1 != null && wh1 != null) {
                 createTx("采购入库", m1, wh1, new BigDecimal("30").add(new BigDecimal(Math.random() * 20)),
                         new BigDecimal("4200").add(new BigDecimal(Math.random() * 200)), baseTime,
                         "采购部", 1L, "华东钢铁有限公司");
                 createTx("领用出库", m1, wh1, new BigDecimal("20").add(new BigDecimal(Math.random() * 15)),
-                        new BigDecimal("4250"), baseTime.plusDays(5),
+                        new BigDecimal("4250"), baseTime.plusDays(outOffset1),
                         "生产部", null, null);
             }
             if (m2 != null && wh3 != null) {
@@ -110,7 +127,7 @@ public class DataInitializer implements CommandLineRunner {
                         new BigDecimal("35").add(new BigDecimal(Math.random() * 3)), baseTime,
                         "采购部", 2L, "精密轴承制造厂");
                 createTx("领用出库", m2, wh3, new BigDecimal("150").add(new BigDecimal(Math.random() * 80)),
-                        new BigDecimal("35.50"), baseTime.plusDays(6),
+                        new BigDecimal("35.50"), baseTime.plusDays(outOffset2),
                         "设备部", null, null);
             }
             if (m3 != null && wh3 != null) {
@@ -118,7 +135,7 @@ public class DataInitializer implements CommandLineRunner {
                         new BigDecimal("1850").add(new BigDecimal(Math.random() * 100)), baseTime,
                         "采购部", 3L, "环球电气设备公司");
                 createTx("领用出库", m3, wh3, new BigDecimal("3"),
-                        new BigDecimal("1880"), baseTime.plusDays(10),
+                        new BigDecimal("1880"), baseTime.plusDays(outOffset3),
                         "设备部", null, null);
             }
             if (m5 != null && wh2 != null) {
@@ -126,7 +143,7 @@ public class DataInitializer implements CommandLineRunner {
                         new BigDecimal("8.50").add(new BigDecimal(Math.random())), baseTime,
                         "采购部", null, null);
                 createTx("领用出库", m5, wh2, new BigDecimal("300").add(new BigDecimal(Math.random() * 200)),
-                        new BigDecimal("8.50"), baseTime.plusDays(3),
+                        new BigDecimal("8.50"), baseTime.plusDays(outOffset4),
                         "生产部", null, null);
             }
         }

@@ -17,7 +17,7 @@ public class ReportController {
 
     private final CostAnalysisService costAnalysisService;
 
-    private static final List<String> MANAGEMENT_ROLES = Arrays.asList("管理层", "系统管理员", "财务主管", "ADMIN", "MANAGER");
+    private static final List<String> MANAGEMENT_ROLES = Arrays.asList("管理层", "系统管理员", "财务主管", "ADMIN", "MANAGER", "管理员");
 
     private ResponseEntity<?> checkManagementRole(HttpServletRequest request) {
         String role = (String) request.getAttribute("role");

@@ -129,6 +129,7 @@ public class CostAnalysisService {
             BigDecimal ratio = totalAmount.compareTo(ZERO) > 0
                     ? item.getAmount().divide(totalAmount, 6, RoundingMode.HALF_UP)
                     : ZERO;
+            BigDecimal cumulativeBefore = cumulative;
             cumulative = cumulative.add(item.getAmount());
             BigDecimal cumulativeRatio = totalAmount.compareTo(ZERO) > 0
                     ? cumulative.divide(totalAmount, 6, RoundingMode.HALF_UP)
@@ -136,10 +137,10 @@ public class CostAnalysisService {
             item.setRatio(ratio);
             item.setCumulativeRatio(cumulativeRatio);
 
-            if (cumulativeRatio.compareTo(new BigDecimal("0.70")) <= 0) {
+            if (cumulativeBefore.compareTo(new BigDecimal("0.70")) < 0) {
                 item.setCategoryClass("A");
                 classA.add(item);
-            } else if (cumulativeRatio.compareTo(new BigDecimal("0.90")) <= 0) {
+            } else if (cumulativeBefore.compareTo(new BigDecimal("0.90")) < 0) {
                 item.setCategoryClass("B");
                 classB.add(item);
             } else {
